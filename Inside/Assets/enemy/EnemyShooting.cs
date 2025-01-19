@@ -4,19 +4,18 @@ using UnityEngine;
 
 public class EnemyShooting : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    
     public GameObject bullet;
     public Transform bulletPos;
     private int totalShots;
     public int maxShots;
     private float timer;
+    private Animator animator;
     
     [SerializeField] 
     public float frequency;
     void Start()
     {
-        
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -25,12 +24,16 @@ public class EnemyShooting : MonoBehaviour
         timer += Time.deltaTime;
         if(timer > frequency){
             timer = 0;
-            shoot();
+            StartCoroutine(Shoot());
         }
     }
 
-    void shoot(){
+    IEnumerator Shoot(){
         if(totalShots < maxShots){
+            animator.SetTrigger("shoot");
+
+            yield return new WaitForSeconds(0.42f);
+
             Instantiate(bullet, bulletPos.position, Quaternion.identity); 
             totalShots+=1;
         }
