@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed;
 
     private Rigidbody2D RB;
-    //private Animator animator;
+    private Animator animator;
     public GameObject respawnPoint;
 
     public bool canMove = true;
@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         RB = GetComponent<Rigidbody2D>();
-        //animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -40,8 +40,8 @@ public class PlayerController : MonoBehaviour
     {
         float horizontal = dir.x;
         float vertical = dir.y;
-        //animator.SetInteger("XDir", Mathf.Clamp((int)(Mathf.Sign(horizontal) * Mathf.Ceil(Mathf.Abs(horizontal))), -1, 1));
-        //animator.SetInteger("YDir", Mathf.Clamp((int)(Mathf.Sign(vertical) * Mathf.Ceil(Mathf.Abs(vertical))), -1, 1));
+        animator.SetInteger("XDir", Mathf.Clamp((int)(Mathf.Sign(horizontal) * Mathf.Ceil(Mathf.Abs(horizontal))), -1, 1));
+        animator.SetInteger("YDir", Mathf.Clamp((int)(Mathf.Sign(vertical) * Mathf.Ceil(Mathf.Abs(vertical))), -1, 1));
     }
 
     //Round the players movement to 8 directions

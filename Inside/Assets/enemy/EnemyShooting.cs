@@ -20,7 +20,7 @@ public class EnemyShooting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timer += Time.deltaTimen ;
+        timer += Time.deltaTime;
         if(timer > frequency){
             timer = 0;
             shoot();
