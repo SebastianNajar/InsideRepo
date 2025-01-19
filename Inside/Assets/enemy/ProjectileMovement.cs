@@ -6,11 +6,16 @@ public class ProjectileMovement : MonoBehaviour
     private Vector3 targetPosition;
     public float radius;
     public float speed;
+    public GameObject residue;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>(); 
 
+        
+        //currently this sets a random point anywhere around the enemy within given radius;
+        // should be changed to where randomPoint is only on the player's side of the platform?
+        // if so, these pool of points should be changed depending on what side the enemy is on?
         Vector2 randomPoint = Random.insideUnitCircle * radius;
         targetPosition = new Vector3(randomPoint.x, randomPoint.y, transform.position.z);
 
@@ -26,7 +31,7 @@ public class ProjectileMovement : MonoBehaviour
         if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
         {
             Destroy(gameObject);
-            //to-do create "virus fire"
+            Instantiate(residue, targetPosition, Quaternion.identity);
         }
     }
 }

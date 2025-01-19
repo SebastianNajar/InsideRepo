@@ -1,4 +1,4 @@
-  using System.Collections;
+using System.Collections;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
@@ -12,6 +12,11 @@ public class PlayerController : MonoBehaviour
     public GameObject respawnPoint;
 
     public bool canMove = true;
+
+    //residue cleaning
+    public float interactionRadius = 1f;
+    private GameObject nearbyResidue;
+    public KeyCode interactKey = KeyCode.E;
 
     //Get the required components from itself
     void Start()
@@ -32,6 +37,19 @@ public class PlayerController : MonoBehaviour
 
             AnimateMovement(direction);
             RB.linearVelocity = RoundTo8Directions(direction);
+        }
+
+        //residue cleaning
+        if (Input.GetKeyDown(interactKey) && nearbyResidue != null)
+        {
+            Debug.Log("key pressed");
+            // call cleanResidue function
+            Residue residue = nearbyResidue.GetComponent<Residue>();
+            if (residue != null)
+            {
+                residue.cleanResidue();
+                
+            }
         }
     }
 
@@ -57,5 +75,23 @@ public class PlayerController : MonoBehaviour
     public void Death()
     {
         transform.position = respawnPoint.transform.position;
+    }
+
+
+    //residue logic
+    void onTriggerEnter2D(Collider2D collision){
+        //check if object is fire
+        if (collision.CompareTag("residue"))
+        {
+            nearbyResidue = collision.gameObject;
+        }
+    }
+
+    void onTriggerExit2D(Collider2D collision){
+        //clear reference when player leaves trigger
+        if (collision.CompareTag("residue"))
+        {
+            nearbyResidue = null;
+        }
     }
 }

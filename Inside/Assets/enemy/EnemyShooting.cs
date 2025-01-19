@@ -8,6 +8,8 @@ public class EnemyShooting : MonoBehaviour
     
     public GameObject bullet;
     public Transform bulletPos;
+    private int totalShots;
+    public int maxShots;
     private float timer;
     
     [SerializeField] 
@@ -28,6 +30,9 @@ public class EnemyShooting : MonoBehaviour
     }
 
     void shoot(){
-         Instantiate(bullet, bulletPos.position, Quaternion.identity ); 
+        if(totalShots < maxShots){
+            Instantiate(bullet, bulletPos.position, Quaternion.identity); 
+            totalShots+=1;
+        }
     }
 }
