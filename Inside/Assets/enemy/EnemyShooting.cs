@@ -7,7 +7,6 @@ public class EnemyShooting : MonoBehaviour
     public GameObject bullet;
     public Transform bulletPos;
     private int totalShots;
-    public int maxShots;
     private float timer;
     private Animator animator;
     
@@ -29,13 +28,13 @@ public class EnemyShooting : MonoBehaviour
     }
 
     IEnumerator Shoot(){
-        if(totalShots < maxShots){
-            animator.SetTrigger("shoot");
 
-            yield return new WaitForSeconds(0.42f);
+        animator.SetTrigger("shoot");
 
-            Instantiate(bullet, bulletPos.position, Quaternion.identity); 
-            totalShots+=1;
-        }
+        yield return new WaitForSeconds(0.42f);
+
+        Instantiate(bullet, bulletPos.position, Quaternion.identity); 
+        totalShots+=1;
+     
     }
 }
