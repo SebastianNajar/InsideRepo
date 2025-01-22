@@ -24,7 +24,7 @@ public class HealthHeartBar : MonoBehaviour
         DrawHearts();
     }
 
-    public void createEmptyHeart()
+    public void CreateEmptyHeart()
     {
         GameObject newHeart = Instantiate(heartPrefab);
         newHeart.transform.SetParent(transform);
@@ -42,7 +42,7 @@ public class HealthHeartBar : MonoBehaviour
        int heartsToMake = (int)(playerHealth.maxHealth / 2 + maxHealthRemainder);
        for (int i = 0; i < heartsToMake; i++)
        {
-            createEmptyHeart();
+            CreateEmptyHeart();
        }
 
        //draw hearts don't work

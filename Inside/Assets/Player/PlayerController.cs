@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
 
     //residue logic
-    void onTriggerEnter2D(Collider2D collision){
+    void OnTriggerEnter2D(Collider2D collision){
         //check if object is fire
         if (collision.CompareTag("residue"))
         {
@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void onTriggerExit2D(Collider2D collision){
+    void OnTriggerExit2D(Collider2D collision){
         //clear reference when player leaves trigger
         if (collision.CompareTag("residue"))
         {
