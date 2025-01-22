@@ -6,6 +6,7 @@ public class PlayerHealth : MonoBehaviour
 {
     public static event Action OnPlayerDamaged;
     public static event Action OnPlayerDeath;
+    public Animator animator;
     
     public int health;
     public int maxHealth = 6;
@@ -20,6 +21,7 @@ public class PlayerHealth : MonoBehaviour
     public void TakeDamage(int amount)
     {
         health -= amount;
+        animator.SetTrigger("damaged");
         OnPlayerDamaged?.Invoke();
 
         if (health <= 0)
