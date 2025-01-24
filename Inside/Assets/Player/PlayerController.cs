@@ -38,6 +38,11 @@ public class PlayerController : MonoBehaviour
             AnimateMovement(direction);
             RB.linearVelocity = RoundTo8Directions(direction);
         }
+        if (canMove == false)
+        {
+            AnimateMovement(Vector3.zero);
+            RB.linearVelocity = Vector3.zero;
+        }
 
         //residue cleaning
         if (Input.GetKeyDown(interactKey) && nearbyResidue != null)
