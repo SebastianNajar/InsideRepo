@@ -13,10 +13,14 @@ public class PlayerController : MonoBehaviour
 
     public bool canMove = true;
 
-    //residue cleaning
-    public float interactionRadius = 1f;
-    private GameObject nearbyResidue;
+    //interaction key
     public KeyCode interactKey = KeyCode.E;
+    public float holdThreshold = 0.5f;
+    private float interactTimer = 0f;
+    private bool isHolding = false;
+
+    //residue
+    private GameObject currentResidue = null;
 
     //Get the required components from itself
     void Start()
@@ -27,6 +31,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        HandleInput();
         //Player Movement
         if (canMove)
         {
@@ -44,18 +49,9 @@ public class PlayerController : MonoBehaviour
             RB.linearVelocity = Vector3.zero;
         }
 
-        //residue cleaning
-        if (Input.GetKeyDown(interactKey) && nearbyResidue != null)
-        {
-            Debug.Log("key pressed");
-            // call cleanResidue function
-            Residue residue = nearbyResidue.GetComponent<Residue>();
-            if (residue != null)
-            {
-                residue.cleanResidue();
-                
-            }
-        }
+        
+
+        
     }
 
     //Animate the player based on movement and direction
@@ -82,21 +78,84 @@ public class PlayerController : MonoBehaviour
         transform.position = respawnPoint.transform.position;
     }
 
-
-    //residue logic
-    void OnTriggerEnter2D(Collider2D collision){
-        //check if object is fire
-        if (collision.CompareTag("residue"))
+    private void HandleInput()
+    {
+        // Check if the interact key is pressed
+        if (Input.GetKeyDown(interactKey))
         {
-            nearbyResidue = collision.gameObject;
+            // Reset the timer and start tracking
+            interactTimer = 0f;
+            isHolding = true;
+        }
+
+        // Increment the timer while the key is held down
+        if (Input.GetKey(interactKey) && isHolding)
+        {
+            interactTimer += Time.deltaTime;
+            if (interactTimer >= holdThreshold)
+            {
+                CleanResidue();
+                isHolding = false; 
+            }
+        }
+
+        if (Input.GetKeyUp(interactKey))
+        {
+            if (isHolding && interactTimer < holdThreshold)
+            {
+                Parry();
+            }
+            isHolding = false;
+            interactTimer = 0f;
         }
     }
 
-    void OnTriggerExit2D(Collider2D collision){
-        //clear reference when player leaves trigger
-        if (collision.CompareTag("residue"))
+    private void CleanResidue()
+    {
+        Debug.Log("Cleaning residue...");
+        if (currentResidue != null)
         {
-            nearbyResidue = null;
+            Debug.Log("Cleaning residue...");
+            Destroy(currentResidue);
+
+            // insert animation for cleaning residue?
+
+            currentResidue = null; 
+        }
+        else
+        {
+            Debug.Log("No residue to clean!");
         }
     }
+    void Parry()
+    {
+        Debug.Log("Tap action triggered...");
+        // Add your tap action logic here
+    }
+
+
+
+    //residue collision
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("residue"))
+        {
+            currentResidue = collision.gameObject;
+            Debug.Log("Residue in range!");
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("residue"))
+        {
+            if (currentResidue == collision.gameObject)
+            {
+                currentResidue = null;
+                Debug.Log("Residue out of range!");
+            }
+        }
+    }
+
 }
+
+ 
