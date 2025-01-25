@@ -39,8 +39,8 @@ public class ParryProjectile: MonoBehaviour
         else if (isFriendly && collision.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("Projectile hit an enemy!");
-            Destroy(collision.gameObject); 
-            Destroy(gameObject); 
+            collision.gameObject.GetComponent<EnemyShooting>().TakeDamage();
+            Destroy(gameObject);
         }
 
     }

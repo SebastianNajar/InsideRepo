@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D RB;
     private Animator animator;
+    public Animator parryAnimator;
     public GameObject respawnPoint;
 
     public bool canMove = true;
@@ -136,6 +137,7 @@ public class PlayerController : MonoBehaviour
     }
     void Parry()
     {
+        parryAnimator.SetTrigger("parry");
         Debug.Log("Tap action triggered...");
         if (nearbyProjectile != null)
         {

@@ -9,12 +9,14 @@ public class EnemyShooting : MonoBehaviour
     private int totalShots;
     private float timer;
     private Animator animator;
+    public GameObject explosion;
     
     [SerializeField] 
     public float frequency;
     void Start()
     {
         animator = GetComponent<Animator>();
+        frequency = Random.Range(1.0f, 3.0f);
     }
 
     // Update is called once per frame
@@ -35,6 +37,11 @@ public class EnemyShooting : MonoBehaviour
 
         Instantiate(bullet, bulletPos.position, Quaternion.identity); 
         totalShots+=1;
-     
+    }
+
+    public void TakeDamage()
+    {
+        GameObject obj = Instantiate(explosion, this.transform.position, this.transform.rotation);
+        Destroy(gameObject);
     }
 }
