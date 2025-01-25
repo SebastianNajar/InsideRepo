@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -21,6 +22,9 @@ public class PlayerController : MonoBehaviour
 
     //residue
     private GameObject currentResidue = null;
+    //parry
+    private GameObject nearbyProjectile = null;
+    private float parryCooldown = 0f;
 
     //Get the required components from itself
     void Start()
@@ -42,6 +46,8 @@ public class PlayerController : MonoBehaviour
 
             AnimateMovement(direction);
             RB.linearVelocity = RoundTo8Directions(direction);
+
+            parryCooldown += Time.deltaTime;
         }
         if (canMove == false)
         {
@@ -101,16 +107,17 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyUp(interactKey))
         {
-            if (isHolding && interactTimer < holdThreshold)
+            if (isHolding && interactTimer < holdThreshold && parryCooldown > 2)
             {
                 Parry();
+                parryCooldown = 0;
             }
             isHolding = false;
             interactTimer = 0f;
         }
     }
 
-    private void CleanResidue()
+     void CleanResidue()
     {
         Debug.Log("Cleaning residue...");
         if (currentResidue != null)
@@ -130,28 +137,76 @@ public class PlayerController : MonoBehaviour
     void Parry()
     {
         Debug.Log("Tap action triggered...");
-        // Add your tap action logic here
+        if (nearbyProjectile != null)
+        {
+            ParryProjectile(nearbyProjectile);
+            Debug.Log("parried");
+        }
+        else
+        {
+            Debug.Log("No projectile to parry!");
+        }
     }
 
 
 
-    //residue collision
+    private void ParryProjectile(GameObject projectile)
+    {
+        Debug.Log("Parried the projectile!");
+
+        // Reverse the projectile's direction
+        Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            Vector2 reversedVelocity = -rb.linearVelocity; // Reverse the current velocity
+            rb.linearVelocity = reversedVelocity;
+
+            // Optional: Make the projectile hostile to enemies instead of the player
+            ParryProjectile behavior = projectile.GetComponent<ParryProjectile>();
+            if (behavior != null)
+            {
+                behavior.ChangeTargetToEnemies(); // Example method to make it harm enemies
+            }
+        }
+    }
+
+
+
+    //residue and projectile collision
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //residue
         if (collision.CompareTag("residue"))
         {
             currentResidue = collision.gameObject;
             Debug.Log("Residue in range!");
         }
+        
+        //projectile
+        if (collision.CompareTag("parry"))
+        {
+            nearbyProjectile = collision.gameObject;
+            Debug.Log("projectile is nearby and ready to parry");
+        }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
+        //residue
         if (collision.CompareTag("residue"))
         {
             if (currentResidue == collision.gameObject)
             {
                 currentResidue = null;
                 Debug.Log("Residue out of range!");
+            }
+        }
+        //projectile
+        if (collision.CompareTag("parry"))
+        {
+            if (nearbyProjectile == collision.gameObject)
+            {
+                nearbyProjectile = null;
+                Debug.Log("projectile out of range");
             }
         }
     }

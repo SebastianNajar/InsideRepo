@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4173775895268296554}
   - component: {fileID: 8176454999138432067}
   - component: {fileID: 1833092436006306504}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: 0 Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4846,9 +4846,9 @@ GameObject:
   - component: {fileID: 150207102120790451}
   - component: {fileID: 7448709463750803587}
   - component: {fileID: -1306662236136536684}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ParryProjectile
-  m_TagString: Untagged
+  m_TagString: parry
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5013,7 +5013,7 @@ GameObject:
   - component: {fileID: 7132494424404431273}
   - component: {fileID: 3016427887300768312}
   - component: {fileID: 7277888769351691147}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: 1 Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9845,7 +9845,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4451052939363885897}
   - component: {fileID: 8534990434957982433}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Projectile Aura
   m_TagString: Untagged
   m_Icon: {fileID: 0}

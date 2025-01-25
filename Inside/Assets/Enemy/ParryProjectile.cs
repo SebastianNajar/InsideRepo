@@ -7,6 +7,7 @@ public class ParryProjectile: MonoBehaviour
     private Rigidbody2D rb;
     private float timer;
     public float force;
+    private bool isFriendly = false;
     
 
     void Start()
@@ -30,10 +31,25 @@ public class ParryProjectile: MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player")){
+        if (!isFriendly && collision.gameObject.CompareTag("Player") && collision.name == "Player")
+        {
             collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(1);
             Destroy(gameObject);
-            //subtract health
         }
+        else if (isFriendly && collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Projectile hit an enemy!");
+            Destroy(collision.gameObject); 
+            Destroy(gameObject); 
+        }
+
     }
+
+    public void ChangeTargetToEnemies()
+    {
+        isFriendly = true;
+        //change color of projectile? optional
+        GetComponent<SpriteRenderer>().color = Color.blue;
+    }
+
 }
