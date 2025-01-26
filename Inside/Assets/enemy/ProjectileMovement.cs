@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class ProjectileMovement : MonoBehaviour
 {
-    private Rigidbody2D rb;
     private Vector3 targetPosition;
     public float radius;
     public float speed;
@@ -10,9 +9,6 @@ public class ProjectileMovement : MonoBehaviour
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>(); 
-
-        
         //currently this sets a random point anywhere around the enemy within given radius;
         // should be changed to where randomPoint is only on the player's side of the platform?
         // if so, these pool of points should be changed depending on what side the enemy is on?
