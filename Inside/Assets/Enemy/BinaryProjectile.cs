@@ -8,7 +8,7 @@ public class BinaryProjectile : MonoBehaviour
 
     private void Start()
     {
-        Destroy(gameObject, 9);
+        Destroy(gameObject, 13);
     }
     void Update()
     {
