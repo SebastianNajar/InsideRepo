@@ -58,10 +58,6 @@ public class PlayerController : MonoBehaviour
             AnimateMovement(Vector3.zero);
             RB.linearVelocity = Vector3.zero;
         }
-
-        
-
-        
     }
 
     //Animate the player based on movement and direction
