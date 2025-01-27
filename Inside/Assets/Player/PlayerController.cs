@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour
     private GameObject nearbyProjectile = null;
     private float parryCooldown = 0f;
 
+    //projectile enemy
+    private GameObject currentEnemy = null;
+
     //Get the required components from itself
     void Start()
     {
@@ -102,7 +105,8 @@ public class PlayerController : MonoBehaviour
             if (interactTimer >= holdThreshold)
             {
                 CleanResidue();
-                isHolding = false; 
+                isHolding = false;
+                KillResidueEnemy();
             }
         }
 
@@ -117,7 +121,18 @@ public class PlayerController : MonoBehaviour
             interactTimer = 0f;
         }
     }
-
+    void KillResidueEnemy()
+    {
+        if (currentEnemy != null)
+        {
+            Destroy(currentEnemy);
+            currentEnemy = null;
+        }
+        else
+        {
+            Debug.Log("No residue enemy!");
+        }
+    }
      void CleanResidue()
     {
         Debug.Log("Cleaning residue...");
@@ -190,6 +205,13 @@ public class PlayerController : MonoBehaviour
             nearbyProjectile = collision.gameObject;
             Debug.Log("projectile is nearby and ready to parry");
         }
+
+        //residue enemy
+        if (collision.CompareTag("residueEnemy"))
+        {
+            currentEnemy = collision.gameObject;
+            Debug.Log("Residue enemy in range!");
+        }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
@@ -211,6 +233,16 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("projectile out of range");
             }
         }
+
+        if (collision.CompareTag("residueEnemy"))
+        {
+            if (currentEnemy == collision.gameObject)
+            {
+                currentEnemy = null;
+                Debug.Log("enemy out of range");
+            }
+        }
+
     }
 
 }

@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 5385271659379523308}
   m_Layer: 8
   m_Name: Residue Enemy
-  m_TagString: Enemy
+  m_TagString: residueEnemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -261,6 +261,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bullet: {fileID: 3962702628355392759, guid: e9d4923c53c2f46eca2ae747dc067075, type: 3}
   bulletPos: {fileID: 6740741203858838826}
+  explosion: {fileID: 0}
   frequency: 8
 --- !u!95 &5385271659379523308
 Animator:
