@@ -261,7 +261,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bullet: {fileID: 3962702628355392759, guid: e9d4923c53c2f46eca2ae747dc067075, type: 3}
   bulletPos: {fileID: 6740741203858838826}
-  explosion: {fileID: 0}
+  explosion: {fileID: 9049650037409056451, guid: 4992870b192eadd42bd6029e1f309119, type: 3}
   frequency: 8
 --- !u!95 &5385271659379523308
 Animator:

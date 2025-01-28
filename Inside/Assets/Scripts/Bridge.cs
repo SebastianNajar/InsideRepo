@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Bridge : MonoBehaviour
 {
+    public bool isWall;
+    public Animator wallAnimator;
     public bool open = false;
     public GameObject[] bridgeParts;
     public Collider2D[] colliders;
@@ -14,10 +16,15 @@ public class Bridge : MonoBehaviour
         if (EnemiesAreNull()) open = true;
 
         //If the bridge is opened construct the bridge
-        if (open)
+        if (open && !isWall)
         {
             StartCoroutine(ConstructBridge());
             DisableColliders();
+            open = false;
+        } 
+        if(open && isWall)
+        {
+            wallAnimator.SetTrigger("open");
             open = false;
         }
     }

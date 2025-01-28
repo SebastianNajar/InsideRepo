@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
     private float parryCooldown = 0f;
 
     //projectile enemy
-    private GameObject currentEnemy = null;
+    private EnemyShooting currentEnemy = null;
 
     //Get the required components from itself
     void Start()
@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
     {
         if (currentEnemy != null)
         {
-            Destroy(currentEnemy);
+            currentEnemy.TakeDamage();
             currentEnemy = null;
         }
         else
@@ -205,7 +205,7 @@ public class PlayerController : MonoBehaviour
         //residue enemy
         if (collision.CompareTag("residueEnemy"))
         {
-            currentEnemy = collision.gameObject;
+            currentEnemy = collision.gameObject.GetComponent<EnemyShooting>();
             Debug.Log("Residue enemy in range!");
         }
     }
@@ -232,7 +232,7 @@ public class PlayerController : MonoBehaviour
 
         if (collision.CompareTag("residueEnemy"))
         {
-            if (currentEnemy == collision.gameObject)
+            if (currentEnemy == collision.gameObject.GetComponent<EnemyShooting>())
             {
                 currentEnemy = null;
                 Debug.Log("enemy out of range");
