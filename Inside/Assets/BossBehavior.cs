@@ -13,6 +13,7 @@ public class BossBehavior : MonoBehaviour
     private Animator animator;
     public GameObject explosion;
     private float playerCollisionTimer = 0f;
+    public PopupManager popup;
 
     // Phase 1
     public float phase1Duration;
@@ -47,6 +48,7 @@ public class BossBehavior : MonoBehaviour
                     break;
             }
         }
+
     }
 
     public void StartFight()
@@ -143,7 +145,7 @@ public class BossBehavior : MonoBehaviour
                 StartCoroutine(StartPhase2());
                 break;
             case 2:
-                StartCoroutine(Die());
+                StartCoroutine(Die()); 
                 break;
         }
     }
@@ -173,9 +175,14 @@ public class BossBehavior : MonoBehaviour
         GameObject obj = Instantiate(explosion, this.transform.position, this.transform.rotation);
         Debug.Log("Boss defeated!");
         Destroy(gameObject);
+
+        yield return new WaitForSeconds(2);
+
+        popup.ShowPopup();
+            
     }
 
-    // Utility Methods
+    // Utility Methods 
     private Vector2 GetRandomBounceDirection()
     {
         float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
