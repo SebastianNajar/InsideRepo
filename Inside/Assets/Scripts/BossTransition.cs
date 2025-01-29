@@ -5,6 +5,7 @@ public class BossTransition : MonoBehaviour
 {
     public Animator windowBar;
     public PlayerController playerController;
+    public BossBehavior boss;
 
     IEnumerator Transition()
     {
@@ -17,8 +18,10 @@ public class BossTransition : MonoBehaviour
         yield return new WaitForSeconds(3);
 
         playerController.canMove = true;
+        boss.StartFight();
 
         Destroy(gameObject);
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -26,6 +29,7 @@ public class BossTransition : MonoBehaviour
         if(collision.gameObject.name == "Player")
         {
             StartCoroutine(Transition());
+            
         }
     }
 }
