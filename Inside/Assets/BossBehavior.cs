@@ -37,11 +37,11 @@ public class BossBehavior : MonoBehaviour
         {
             bossCollider.enabled = false;
         }
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        /*spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
         {
             spriteRenderer.enabled = false; // Hide the boss initially
-        }
+        }*/
 
         rb = GetComponent<Rigidbody2D>();
         StartPhase1();
