@@ -24,18 +24,21 @@ public class ProjectileSpawners : MonoBehaviour
         }
     }
 
-    public void DestroySpawners()
+    public void DisableSpawners()
     {
-        Destroy(gameObject);
+        foreach (GameObject spawner in spawners)
+        {
+            active = false;
+        }
     }
 
-    public void ActivateSpawners()
+    public void ActivateSpawners(bool boss = false)
     {
         foreach (GameObject spawner in spawners)
         {
             active = true;
             int randomize = Random.Range(0, 5);
-            if (randomize > 1)
+            if (randomize > 1 && !boss)
             {
                 GameObject newProjectile = Instantiate(projectile, new Vector3(spawner.transform.position.x, spawner.transform.position.y - 20), spawner.transform.rotation);
             }

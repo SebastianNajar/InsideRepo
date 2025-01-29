@@ -8,12 +8,13 @@ public class ParryProjectile: MonoBehaviour
     private float timer;
     public float force;
     private bool isFriendly = false;
-    
+    public BossBehavior bossBehavior;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.FindGameObjectWithTag("Player");
+        bossBehavior = GameObject.Find("Boss").GetComponent<BossBehavior>();
 
         Vector3 direction = player.transform.position - transform.position;
         rb.linearVelocity = new Vector2(direction.x, direction.y).normalized * force;
@@ -22,6 +23,14 @@ public class ParryProjectile: MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
+
+        if(timer > 6)
+        {
+            if (bossBehavior.fightStarted)
+            {
+                bossBehavior.OnParryFail();
+            }
+        }
 
         if(timer > 10)
         {
@@ -34,6 +43,10 @@ public class ParryProjectile: MonoBehaviour
         if (!isFriendly && collision.gameObject.CompareTag("Player") && collision.name == "Player")
         {
             collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(1);
+            if (bossBehavior.fightStarted)
+            {
+                bossBehavior.OnParryFail();
+            }
             Destroy(gameObject);
         }
         else if (isFriendly && collision.gameObject.CompareTag("Enemy"))

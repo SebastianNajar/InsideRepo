@@ -240,9 +240,7 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("enemy out of range");
             }
         }
-
     }
-
 }
 
  

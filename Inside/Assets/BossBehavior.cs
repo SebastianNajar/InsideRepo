@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class BossBehavior : MonoBehaviour
@@ -8,49 +9,31 @@ public class BossBehavior : MonoBehaviour
     private int currentPhase = 1;
     private float phaseTimer = 0f;
     private bool isPhaseActive = true;
-    private bool fightStarted = false; // NEW: Tracks if the fight has started
-    private Collider2D bossCollider;
+    public bool fightStarted = false; // NEW: Tracks if the fight has started
     private Animator animator;
-
+    public GameObject explosion;
+    private float playerCollisionTimer = 0f;
 
     // Phase 1
-    public float phase1Duration = 15f;
+    public float phase1Duration;
     public float bounceSpeed = 5f;
     private Rigidbody2D rb;
 
     // Phase 2
-    public GameObject residueProjectilePrefab;
-    public float residueProjectileInterval = 2f; // Time between residue projectile shots
-    private float residueTimer = 0f;
-
-    // Phase 3
-    public GameObject binaryProjectilePrefab;
-    public float binaryProjectileInterval = 1f; // Time between binary projectile shots
-    private float binaryTimer = 0f;
-
-    //sprite
-    private SpriteRenderer spriteRenderer;
+    public GameObject binarySpawner;
+    private ProjectileSpawners spawner;
+    private bool alreadySpanwed = false;
 
     void Start()
     {
-        bossCollider = GetComponent<Collider2D>();
         animator = GetComponent<Animator>();
-        /*if (bossCollider != null)
-        {
-            bossCollider.enabled = false;
-        }*/
-        /*spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.enabled = false; // Hide the boss initially
-        }*/
-
         rb = GetComponent<Rigidbody2D>();
-        //StartPhase1();
+        spawner = binarySpawner.GetComponent<ProjectileSpawners>();
     }
 
     void Update()
     {
+        playerCollisionTimer += Time.deltaTime;
 
         if (isPhaseActive && fightStarted)
         {
@@ -61,9 +44,6 @@ public class BossBehavior : MonoBehaviour
                     break;
                 case 2:
                     Phase2Behavior();
-                    break;
-                case 3:
-                    Phase3Behavior();
                     break;
             }
         }
@@ -105,66 +85,35 @@ public class BossBehavior : MonoBehaviour
     }
 
     // Phase 2 Logic
-    private void StartPhase2()
+    private IEnumerator StartPhase2()
     {
+        yield return new WaitForSeconds(1);
+        animator.SetTrigger("shoot");
+        yield return new WaitForSeconds(1);
+
+        animator.SetTrigger("walk");
+        if(alreadySpanwed == false)
+        {
+            Transform spawnerPos = binarySpawner.transform;
+            spawnerPos.position = new Vector3(spawnerPos.position.x, spawnerPos.position.y + 13, spawnerPos.position.z);
+            spawner.ActivateSpawners(true);
+            alreadySpanwed = true;
+        }
+
         currentPhase = 2;
         isPhaseActive = true;
         phaseTimer = 0f;
-        residueTimer = 0f;
-        rb.linearVelocity = Vector2.zero; // Stop the boss's movement
+        rb.linearVelocity = GetRandomBounceDirection() * bounceSpeed;
     }
 
     private void Phase2Behavior()
     {
+        if (rb.linearVelocity.magnitude < 0.1f) // Reapply random velocity if it stops
+        {
+            rb.linearVelocity = GetRandomBounceDirection() * bounceSpeed;
+        }
+
         phaseTimer += Time.deltaTime;
-        residueTimer += Time.deltaTime;
-
-        // Shoot residue projectiles at intervals
-        if (residueTimer >= residueProjectileInterval)
-        {
-            residueTimer = 0f;
-            Instantiate(residueProjectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
-        }
-
-        // Launch parryable projectile after 15 seconds
-        if (phaseTimer >= phase1Duration)
-        {
-            LaunchParryableProjectile();
-            isPhaseActive = false; // Temporarily stop behavior until parry resolves
-        }
-    }
-
-    // Phase 3 Logic
-    private void StartPhase3()
-    {
-        currentPhase = 3;
-        isPhaseActive = true;
-        phaseTimer = 0f;
-        residueTimer = 0f;
-        binaryTimer = 0f;
-        rb.linearVelocity = Vector2.zero; // Stop the boss's movement
-    }
-
-    private void Phase3Behavior()
-    {
-        phaseTimer += Time.deltaTime;
-        residueTimer += Time.deltaTime;
-        binaryTimer += Time.deltaTime;
-
-        // Shoot residue projectiles at intervals
-        if (residueTimer >= residueProjectileInterval)
-        {
-            residueTimer = 0f;
-            Instantiate(residueProjectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
-        }
-
-        // Shoot binary projectiles at intervals
-        if (binaryTimer >= binaryProjectileInterval)
-        {
-            binaryTimer = 0f;
-            Vector2 randomDirection = GetRandomDirection();
-            Instantiate(binaryProjectilePrefab, projectileSpawnPoint.position, Quaternion.identity).GetComponent<Rigidbody2D>().linearVelocity = randomDirection * bounceSpeed;
-        }
 
         // Launch parryable projectile after 15 seconds
         if (phaseTimer >= phase1Duration)
@@ -186,17 +135,15 @@ public class BossBehavior : MonoBehaviour
     public void OnParrySuccess()
     {
         Debug.Log("Parry succeeded!");
+        animator.SetTrigger("damage");
 
         switch (currentPhase)
         {
             case 1:
-                StartPhase2();
+                StartCoroutine(StartPhase2());
                 break;
             case 2:
-                StartPhase3();
-                break;
-            case 3:
-                Die();
+                StartCoroutine(Die());
                 break;
         }
     }
@@ -204,13 +151,26 @@ public class BossBehavior : MonoBehaviour
     public void OnParryFail()
     {
         Debug.Log("Parry failed!");
-        isPhaseActive = true; // Restart current phase
-        phaseTimer = 0f;
+        switch (currentPhase)
+        {
+            case 1:
+                StartPhase1();
+                break;
+            case 2:
+                StartCoroutine(StartPhase2());
+                break;
+        }
     }
 
     // Boss Death
-    private void Die()
+    private IEnumerator Die()
     {
+        spawner.DisableSpawners();
+        animator.SetTrigger("dead");
+
+        yield return new WaitForSeconds(3);
+
+        GameObject obj = Instantiate(explosion, this.transform.position, this.transform.rotation);
         Debug.Log("Boss defeated!");
         Destroy(gameObject);
     }
@@ -230,6 +190,11 @@ public class BossBehavior : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if(collision.gameObject.name == "Player" && playerCollisionTimer > 2)
+        {
+            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(1);
+            playerCollisionTimer = 0;
+        }
         // Reverse direction upon hitting walls
         Vector2 normal = collision.contacts[0].normal;
         rb.linearVelocity = Vector2.Reflect(rb.linearVelocity, normal).normalized * bounceSpeed;
