@@ -6,13 +6,24 @@ public class CameraController : MonoBehaviour
     public int moveSpeed;
     public bool canMove = false;
     public bool switchToPlayer = false;
+    public bool switchToBoss = false;
     public bool followPlayer = false;
 
     private void Update()
     {
-        if (canMove)
+        if (canMove && !switchToBoss)
         {
             transform.position = Vector3.Lerp(transform.position, target.position, moveSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, target.position) < 0.1f)
+            {
+                transform.position = new Vector3(target.position.x, target.position.y, -10);
+                canMove = false;
+            }
+        }
+        else if (switchToBoss)
+        {
+            transform.position = Vector3.Lerp(transform.position, target.position, moveSpeed * (Time.deltaTime/5));
 
             if (Vector3.Distance(transform.position, target.position) < 0.1f)
             {
@@ -48,5 +59,10 @@ public class CameraController : MonoBehaviour
     public void SwitchToPlayer()
     {
         switchToPlayer = true;
+    }
+
+    public void SwitchToBoss()
+    {
+        switchToBoss = true;
     }
 }

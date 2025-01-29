@@ -139,6 +139,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c57c561d180a147a19bf8016bafc3a82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1
+  damageInterval: 2
+  explosionTimer: 8
+  explosion: {fileID: 9049650037409056451, guid: 4992870b192eadd42bd6029e1f309119, type: 3}
 --- !u!95 &1688812007063574048
 Animator:
   serializedVersion: 7

@@ -42,14 +42,17 @@ public class ParryProjectile: MonoBehaviour
             collision.gameObject.GetComponent<EnemyShooting>().TakeDamage();
             Destroy(gameObject);
         }
+        else if(isFriendly && collision.gameObject.CompareTag("Boss"))
+        {
+            collision.gameObject.GetComponent<BossBehavior>().OnParrySuccess();
+            Destroy(gameObject);
+        }
 
     }
 
     public void ChangeTargetToEnemies()
     {
         isFriendly = true;
-        //change color of projectile? optional
-        GetComponent<SpriteRenderer>().color = Color.blue;
     }
 
 }

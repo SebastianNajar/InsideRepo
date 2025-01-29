@@ -8,6 +8,9 @@ public class Residue : MonoBehaviour
     private bool isPlayerOnResidue = false; // Whether the player is standing on the residue
     private float damageTimer = 0f; // Timer to track time for repeated damage
 
+    public float explosionTimer;
+    public GameObject explosion;
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         // Check if the object entering the trigger is the player
@@ -29,6 +32,12 @@ public class Residue : MonoBehaviour
 
     private void Update()
     {
+        explosionTimer -= Time.deltaTime;
+
+        if (explosionTimer <= 0f)
+        {
+            Explode();
+        }
         // If the player is standing on the residue, apply damage over time
         if (isPlayerOnResidue)
         {
@@ -56,6 +65,13 @@ public class Residue : MonoBehaviour
     public void cleanResidue()
     {
         Debug.Log("Residue cleaned");
+        Destroy(gameObject);
+    }
+
+    public void Explode()
+    {
+        GameObject obj = Instantiate(explosion, this.transform.position, this.transform.rotation);
+        ApplyDamage();
         Destroy(gameObject);
     }
 }

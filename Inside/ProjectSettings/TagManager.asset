@@ -8,6 +8,7 @@ TagManager:
   - parry
   - Enemy
   - residueEnemy
+  - Boss
   layers:
   - Default
   - TransparentFX

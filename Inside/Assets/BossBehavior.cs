@@ -10,6 +10,7 @@ public class BossBehavior : MonoBehaviour
     private bool isPhaseActive = true;
     private bool fightStarted = false; // NEW: Tracks if the fight has started
     private Collider2D bossCollider;
+    private Animator animator;
 
 
     // Phase 1
@@ -33,10 +34,11 @@ public class BossBehavior : MonoBehaviour
     void Start()
     {
         bossCollider = GetComponent<Collider2D>();
-        if (bossCollider != null)
+        animator = GetComponent<Animator>();
+        /*if (bossCollider != null)
         {
             bossCollider.enabled = false;
-        }
+        }*/
         /*spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
         {
@@ -44,14 +46,13 @@ public class BossBehavior : MonoBehaviour
         }*/
 
         rb = GetComponent<Rigidbody2D>();
-        StartPhase1();
+        //StartPhase1();
     }
 
     void Update()
     {
-        if (!fightStarted) return;
 
-        if (isPhaseActive)
+        if (isPhaseActive && fightStarted)
         {
             switch (currentPhase)
             {
@@ -70,10 +71,6 @@ public class BossBehavior : MonoBehaviour
 
     public void StartFight()
     {
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.enabled = true;
-        }
         fightStarted = true;
         StartPhase1();
     }
@@ -81,6 +78,7 @@ public class BossBehavior : MonoBehaviour
     // Phase 1 Logic
     private void StartPhase1()
     {
+        animator.SetTrigger("walk");
         currentPhase = 1;
         isPhaseActive = true;
         phaseTimer = 0f;
@@ -180,6 +178,8 @@ public class BossBehavior : MonoBehaviour
     private void LaunchParryableProjectile()
     {
         Debug.Log("Launching parryable projectile!");
+        rb.linearVelocity = Vector2.zero;
+        animator.SetTrigger("shoot");
         Instantiate(parryableProjectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
     }
 
