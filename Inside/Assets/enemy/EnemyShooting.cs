@@ -10,13 +10,20 @@ public class EnemyShooting : MonoBehaviour
     private float timer;
     private Animator animator;
     public GameObject explosion;
-    
+    public bool hasResidue;
+
     [SerializeField] 
     public float frequency;
     void Start()
     {
         animator = GetComponent<Animator>();
-        frequency = Random.Range(1.0f, 3.0f);
+        if (hasResidue)
+        {
+            frequency = Random.Range(3.0f, 4.5f);
+        } else
+        {
+            frequency = Random.Range(1.0f, 3.0f);
+        }
     }
 
     // Update is called once per frame

@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D RB;
     private Animator animator;
     public Animator parryAnimator;
+    public Animator parryBarAnimator;
     public GameObject respawnPoint;
 
     public bool canMove = true;
@@ -159,6 +160,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("No projectile to parry!");
         }
+        parryBarAnimator.SetTrigger("coolDown");
     }
 
 

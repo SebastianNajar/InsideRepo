@@ -10,7 +10,7 @@ public class ProjectileSpawners : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
-        if(timer > Random.Range(3, 6) && active)
+        if(timer > Random.Range(4, 6) && active)
         {
             timer = 0;
             foreach(GameObject spawner in spawners)
