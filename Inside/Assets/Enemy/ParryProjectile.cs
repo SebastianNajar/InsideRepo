@@ -6,6 +6,7 @@ public class ParryProjectile: MonoBehaviour
     private GameObject player;
     private Rigidbody2D rb;
     private float timer;
+    private float parryTimer;
     public float force;
     private bool isFriendly = false;
     public BossBehavior bossBehavior;
@@ -23,13 +24,15 @@ public class ParryProjectile: MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
+        parryTimer += Time.deltaTime;
 
-        if(timer > 6)
+        if(parryTimer > 6)
         {
             if (bossBehavior.fightStarted)
             {
                 bossBehavior.OnParryFail();
             }
+            parryTimer = 0;
         }
 
         if(timer > 10)
@@ -45,6 +48,7 @@ public class ParryProjectile: MonoBehaviour
             collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(1);
             if (bossBehavior.fightStarted)
             {
+                Debug.Log("Pop up once");
                 bossBehavior.OnParryFail();
             }
             Destroy(gameObject);

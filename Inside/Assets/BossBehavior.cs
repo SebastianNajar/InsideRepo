@@ -9,7 +9,7 @@ public class BossBehavior : MonoBehaviour
     private int currentPhase = 1;
     private float phaseTimer = 0f;
     private bool isPhaseActive = true;
-    public bool fightStarted = false; // NEW: Tracks if the fight has started
+    public bool fightStarted = false; // Tracks if the fight has started
     private Animator animator;
     public GameObject explosion;
     private float playerCollisionTimer = 0f;
@@ -25,11 +25,14 @@ public class BossBehavior : MonoBehaviour
     private ProjectileSpawners spawner;
     private bool alreadySpanwed = false;
 
+    private Transform player;
+
     void Start()
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         spawner = binarySpawner.GetComponent<ProjectileSpawners>();
+        player = GameObject.FindWithTag("Player").transform; // Find the player object
     }
 
     void Update()
@@ -48,7 +51,6 @@ public class BossBehavior : MonoBehaviour
                     break;
             }
         }
-
     }
 
     public void StartFight()
@@ -64,21 +66,19 @@ public class BossBehavior : MonoBehaviour
         currentPhase = 1;
         isPhaseActive = true;
         phaseTimer = 0f;
-        rb.linearVelocity = GetRandomBounceDirection() * bounceSpeed;
+        rb.linearVelocity = GetDirectionToPlayer() * bounceSpeed;
     }
 
     private void Phase1Behavior()
     {
-        // Handle bouncing
-        if (rb.linearVelocity.magnitude < 0.1f) // Reapply random velocity if it stops
-        {
-            rb.linearVelocity = GetRandomBounceDirection() * bounceSpeed;
-        }
+        // Make boss follow the player during this phase
+        Vector2 directionToPlayer = GetDirectionToPlayer();
+        rb.linearVelocity = directionToPlayer * bounceSpeed;
 
         // Update phase timer
         phaseTimer += Time.deltaTime;
 
-        // Launch parryable projectile after 15 seconds
+        // Launch parryable projectile after phase duration
         if (phaseTimer >= phase1Duration)
         {
             LaunchParryableProjectile();
@@ -94,30 +94,30 @@ public class BossBehavior : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         animator.SetTrigger("walk");
-        if(alreadySpanwed == false)
+        if (!alreadySpanwed)
         {
             Transform spawnerPos = binarySpawner.transform;
             spawnerPos.position = new Vector3(spawnerPos.position.x, spawnerPos.position.y + 13, spawnerPos.position.z);
             spawner.ActivateSpawners(true);
             alreadySpanwed = true;
+            spawner.isBoss = true;
         }
 
         currentPhase = 2;
         isPhaseActive = true;
         phaseTimer = 0f;
-        rb.linearVelocity = GetRandomBounceDirection() * bounceSpeed;
+        rb.linearVelocity = GetDirectionToPlayer() * bounceSpeed;
     }
 
     private void Phase2Behavior()
     {
-        if (rb.linearVelocity.magnitude < 0.1f) // Reapply random velocity if it stops
-        {
-            rb.linearVelocity = GetRandomBounceDirection() * bounceSpeed;
-        }
+        // Make boss follow the player during this phase
+        Vector2 directionToPlayer = GetDirectionToPlayer();
+        rb.linearVelocity = directionToPlayer * bounceSpeed;
 
         phaseTimer += Time.deltaTime;
 
-        // Launch parryable projectile after 15 seconds
+        // Launch parryable projectile after phase duration
         if (phaseTimer >= phase1Duration)
         {
             LaunchParryableProjectile();
@@ -145,7 +145,7 @@ public class BossBehavior : MonoBehaviour
                 StartCoroutine(StartPhase2());
                 break;
             case 2:
-                StartCoroutine(Die()); 
+                StartCoroutine(Die());
                 break;
         }
     }
@@ -174,30 +174,22 @@ public class BossBehavior : MonoBehaviour
 
         GameObject obj = Instantiate(explosion, this.transform.position, this.transform.rotation);
         Debug.Log("Boss defeated!");
+        popup.ShowPopup();
         Destroy(gameObject);
 
-        yield return new WaitForSeconds(2);
 
-        popup.ShowPopup();
-            
-    }
+    } 
 
     // Utility Methods 
-    private Vector2 GetRandomBounceDirection()
+    private Vector2 GetDirectionToPlayer()
     {
-        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
-        return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-    }
-
-    private Vector2 GetRandomDirection()
-    {
-        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
-        return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
+        // Get direction to player by subtracting the boss position from the player's position
+        return (player.position - transform.position).normalized;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.name == "Player" && playerCollisionTimer > 2)
+        if (collision.gameObject.name == "Player" && playerCollisionTimer > 2)
         {
             collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(1);
             playerCollisionTimer = 0;

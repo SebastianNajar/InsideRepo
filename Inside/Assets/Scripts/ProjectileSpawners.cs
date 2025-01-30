@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ProjectileSpawners : MonoBehaviour
@@ -6,6 +7,7 @@ public class ProjectileSpawners : MonoBehaviour
     public GameObject projectile;
     private bool active = false;
     private float timer;
+    public bool isBoss = false;
     
     void Update()
     {
@@ -16,7 +18,11 @@ public class ProjectileSpawners : MonoBehaviour
             foreach(GameObject spawner in spawners)
             {
                 int randomize = Random.Range(0, 5);
-                if(randomize > 1)
+                if(randomize > 1 && !isBoss)
+                {
+                    GameObject newProjectile = Instantiate(projectile, spawner.transform.position, spawner.transform.rotation);
+                } 
+                else if(randomize > 2 && isBoss)
                 {
                     GameObject newProjectile = Instantiate(projectile, spawner.transform.position, spawner.transform.rotation);
                 }
